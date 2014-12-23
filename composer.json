@@ -1,7 +1,9 @@
 {
   "name": "anho/behat-formatter-teamcity",
   "type": "library",
+  "description": "Format ouput of behat to interact with TeamCity Continuous Integration Server",
   "license": "MIT",
+  "keywords": ["behat", "teamcity"],
   "require": {
     "php": ">=5.3.3",
     "behat/behat": "~3.0"
