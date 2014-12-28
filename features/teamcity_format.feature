@@ -195,3 +195,34 @@ Feature: Teamcity Formatter
     ##teamcity[testFinished name='Escape chars |'|[|]||']
     ##teamcity[testSuiteFinished name='Escape |'|[|]||']
     """
+
+  Scenario: Use a suite
+    Given a file named "behat.yml" with:
+    """
+    default:
+      extensions:
+        Behat\TeamCityFormatter\TeamCityFormatterExtension: ~
+      suites:
+        my_suite:
+          paths:
+            - %paths.base%/features
+    """
+    And a file named "features/in-suite.feature" with:
+    """
+    Feature: Simple
+      Scenario: Add
+        Given I have entered 2
+        When I add 2
+        Then I must have 4
+
+    """
+    When I run "behat --no-colors -f teamcity -s my_suite"
+    Then it should pass with:
+    """
+    ##teamcity[testSuiteStarted name='my_suite']
+    ##teamcity[testSuiteStarted name='Simple']
+    ##teamcity[testStarted name='Add']
+    ##teamcity[testFinished name='Add']
+    ##teamcity[testSuiteFinished name='Simple']
+    ##teamcity[testSuiteFinished name='my_suite']
+    """

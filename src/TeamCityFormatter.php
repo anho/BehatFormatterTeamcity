@@ -17,6 +17,9 @@ use Behat\Behat\EventDispatcher\Event\StepTested;
 use Behat\Behat\Output\Printer\ConsoleOutputPrinter;
 use Behat\Gherkin\Node\ScenarioLikeInterface;
 use Behat\Testwork\Call\CallResult;
+use Behat\Testwork\EventDispatcher\Event\AfterSuiteTested;
+use Behat\Testwork\EventDispatcher\Event\BeforeSuiteTested;
+use Behat\Testwork\EventDispatcher\Event\SuiteTested;
 use Behat\Testwork\Output\Formatter;
 use Behat\Testwork\Output\Printer\OutputPrinter;
 use Behat\Testwork\Tester\Result\TestResult;
@@ -46,6 +49,8 @@ class TeamCityFormatter implements Formatter
     public static function getSubscribedEvents()
     {
         return array(
+            SuiteTested::BEFORE    => 'onBeforeSuiteTested',
+            SuiteTested::AFTER     => 'onAfterSuiteTested',
             FeatureTested::BEFORE  => 'onBeforeFeatureTested',
             FeatureTested::AFTER   => 'onAfterFeatureTested',
             ScenarioTested::BEFORE => 'onBeforeScenarioTested',
@@ -114,6 +119,16 @@ class TeamCityFormatter implements Formatter
         if (TestResult::FAILED === $result->getResultCode()) {
             $this->failedStep = $result->getCallResult();
         }
+    }
+
+    public function onBeforeSuiteTested(BeforeSuiteTested $event)
+    {
+        $this->writeServiceMessage('testSuiteStarted', array('name' => $event->getSuite()->getName()));
+    }
+
+    public function onAfterSuiteTested(AfterSuiteTested $event)
+    {
+        $this->writeServiceMessage('testSuiteFinished', array('name' => $event->getSuite()->getName()));
     }
 
     /**
