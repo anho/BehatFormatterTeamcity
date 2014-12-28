@@ -1,5 +1,7 @@
 # BehatFormatterTeamcity
 
+[![Build Status](https://travis-ci.org/anho/BehatFormatterTeamcity.svg?branch=master)](https://travis-ci.org/anho/BehatFormatterTeamcity)
+
 ## Load the extension
 Add the extension to your behat.yml like this:
 
