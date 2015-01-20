@@ -22,6 +22,7 @@ use Behat\Testwork\EventDispatcher\Event\BeforeSuiteTested;
 use Behat\Testwork\EventDispatcher\Event\SuiteTested;
 use Behat\Testwork\Output\Formatter;
 use Behat\Testwork\Output\Printer\OutputPrinter;
+use Behat\Testwork\Tester\Result\ExceptionResult;
 use Behat\Testwork\Tester\Result\TestResult;
 
 class TeamCityFormatter implements Formatter
@@ -117,7 +118,7 @@ class TeamCityFormatter implements Formatter
         $result = $event->getTestResult();
 
         if (TestResult::FAILED === $result->getResultCode()) {
-            $this->failedStep = $result->getCallResult();
+            $this->failedStep = $result;
         }
     }
 
@@ -185,8 +186,17 @@ class TeamCityFormatter implements Formatter
                 $failedParams = $params;
 
                 if ($this->failedStep && $this->failedStep->hasException()) {
-                    $exception = $this->failedStep->getException();
-                    $failedParams['message'] = $exception->getMessage();
+                    switch (true) {
+                        case ($this->failedStep instanceof ExceptionResult && $this->failedStep->hasException()):
+                            $exception = $this->failedStep->getException();
+                            $failedParams['message'] = $exception->getMessage();
+
+                            break;
+                        default:
+                            $failedParams['message'] = sprintf("Unknown error in ", get_class($this->failedStep));
+                            break;
+                    }
+
                     #$failedParams['details'] = $this->sanitizeExceptionStack($exception);
                 }
 
