@@ -8,6 +8,7 @@ use Behat\Testwork\ServiceContainer\ExtensionManager;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 class TeamCityFormatterExtension implements Extension
 {
@@ -47,7 +48,10 @@ class TeamCityFormatterExtension implements Extension
      */
     public function load(ContainerBuilder $container, array $config)
     {
-        $definition = new Definition("Behat\\TeamCityFormatter\\TeamCityFormatter");
+        $outputDefinition = new Reference('cli.output');
+        $outputPrinterDefinition = new Definition('Behat\\TeamCityFormatter\\ConsoleOutput', array($outputDefinition));
+
+        $definition = new Definition("Behat\\TeamCityFormatter\\TeamCityFormatter", array($outputPrinterDefinition));
         $definition->addTag(OutputExtension::FORMATTER_TAG, array('priority' => 90));
 
         $container->setDefinition(OutputExtension::FORMATTER_TAG . '.teamcity', $definition);

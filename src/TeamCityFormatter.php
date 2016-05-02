@@ -14,7 +14,6 @@ use Behat\Behat\EventDispatcher\Event\FeatureTested;
 use Behat\Behat\EventDispatcher\Event\OutlineTested;
 use Behat\Behat\EventDispatcher\Event\ScenarioTested;
 use Behat\Behat\EventDispatcher\Event\StepTested;
-use Behat\Behat\Output\Printer\ConsoleOutputPrinter;
 use Behat\Gherkin\Node\ScenarioLikeInterface;
 use Behat\Testwork\Call\CallResult;
 use Behat\Testwork\EventDispatcher\Event\AfterSuiteTested;
@@ -37,12 +36,22 @@ class TeamCityFormatter implements Formatter
     );
 
     /**
-     * @var ConsoleOutputPrinter
+     * @var OutputPrinter
      */
     protected $printer;
 
     /** @var CallResult|null */
     private $failedStep;
+
+    /**
+     * TeamCityFormatter constructor.
+     * 
+     * @param OutputPrinter $printer
+     */
+    public function __construct(OutputPrinter $printer)
+    {
+        $this->printer = $printer;
+    }
 
     /**
      * @inheritdoc
@@ -109,7 +118,6 @@ class TeamCityFormatter implements Formatter
      */
     public function getOutputPrinter()
     {
-        $this->printer = new ConsoleOutputPrinter();
         return $this->printer;
     }
 
