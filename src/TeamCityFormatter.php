@@ -135,7 +135,7 @@ class TeamCityFormatter implements Formatter
         $this->writeServiceMessage('testSuiteStarted', array('name' => $event->getSuite()->getName()));
     }
 
-    public function onAfterSuiteTested(AfterSuiteTested $event)
+    public function onAfterSuiteTested(SuiteTested $event)
     {
         $this->writeServiceMessage('testSuiteFinished', array('name' => $event->getSuite()->getName()));
     }
